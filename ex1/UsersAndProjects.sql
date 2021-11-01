@@ -40,6 +40,11 @@ ALTER TABLE users
 ALTER TABLE users
 	ALTER COLUMN password VARCHAR(8)  NOT NULL
 
+ALTER TABLE users_has_projects
+	ADD CONSTRAINT pk_primary_key PRIMARY KEY (users_id, projects_id)
+	
+EXEC sp_columns users_has_projects
+	
 DROP TABLE users_has_projects;
 DROP TABLE projects;
 DROP TABLE users;
