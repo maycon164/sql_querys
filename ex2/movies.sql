@@ -208,7 +208,7 @@ dias_alugado(Total de dias que o dvd ficou alugado) e valor das locações da cl
 tem, no nome, o termo Rosa
  * */
 	
-SELECT id_dvd, data_locacao, data_devolucao, DATEDIFF(DAY, data_locacao, data_devolucao) as dias_alugados
+SELECT id_dvd, data_locacao, data_devolucao, DATEDIFF(DAY, data_locacao, data_devolucao) as dias_alugados, valor
 FROM locacao 
 	WHERE id_cliente in 
 	(SELECT id FROM cliente WHERE nome LIKE '%Rosa%')
