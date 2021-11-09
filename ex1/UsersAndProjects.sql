@@ -1,7 +1,6 @@
 CREATE DATABASE projetos;
 USE projetos;
 
-
 ----CRIAÇÃO DAS TABELAS
 CREATE TABLE users(
 	
@@ -126,14 +125,60 @@ WHERE name LIKE '%Manutenção%'
 	
 ---RESETAR IDENT
 DBCC CHECKIDENT(projects, RESEED, 10001);
-
 DELETE from projects 
+
+-------------------------------CONSULTAS COM JOINS
+
+/*1) Id, Name e Email de Users, Id, Name, Description e Data de Projects, dos usuários que
+participaram do projeto Name Re-folha
+*/
+SELECT u.id AS id_user, u.name AS name_user, u.email,
+p.id AS id_project, p.name AS name_project, p.description,
+CONVERT(CHAR(11), p.data_inicio, 103) AS data_inicio_projeto
+FROM users u, projects p, users_has_projects uhp
+WHERE u.id = uhp.users_id 
+AND p.id = uhp.projects_id 
+AND p.name = 'RE-folha'
+
+/*2) Name dos Projects que não tem Users
+ * 
+ * DADOS QUE ESTÃO NA TABELA projects, mas não estão na tabela associativa de
+ * user_has_projects
+ * retorna vazio, pois todos os projetos tem ao menos 1 user
+ * */
+
+SELECT p.name
+FROM projects AS p
+LEFT OUTER JOIN users_has_projects AS uhp
+ON p.id = uhp.projects_id 
+WHERE uhp.projects_id IS NULL
+
+SELECT * FROM projects p 
+SELECT * FROM users_has_projects uhp 
+
+--APENAS PARA TESTE 
+--user has project '3, 10003'
+
+DELETE users_has_projects
+	WHERE users_id = 3 AND projects_id = 10003
+
+INSERT INTO users_has_projects 
+VALUES(3, 10003)
+
+/*3) Name dos Users que não tem Projects
+ * A IDEIA AQUI É A MESMA
+ * */
+SELECT u.*
+FROM users u
+LEFT OUTER JOIN users_has_projects uhp 
+ON u.id = uhp.users_id 
+WHERE uhp.users_id IS NULL
+
+SELECT * FROM users u 
+SELECT * FROM users_has_projects uhp 	
 
 --CHECAR COLUNAS DE UMA TABELA
 exec sp_columns users
 exec sp_columns projects
 exec sp_columns users_has_projects
 
-select GETDATE(); 
-
-drop table users
