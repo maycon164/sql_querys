@@ -36,6 +36,9 @@ CREATE TABLE users_has_projects(
 ---MODIFICAÇÕES NAS COLUNAS
 ALTER TABLE users
 	ALTER COLUMN username VARCHAR(10) 
+	
+ALTER TABLE users
+	ADD UNIQUE (username)
 
 ALTER TABLE users
 	ALTER COLUMN password VARCHAR(8)  NOT NULL
@@ -89,15 +92,21 @@ UPDATE users
 DELETE FROM users_has_projects 
 WHERE users_id = 2 AND projects_id = 10002
 
----CONSULTAS
+----------------------------------CONSULTAS
+
+--- 1 
 SELECT id, name, email, username, 
-CASE WHEN (password != '123mudar') THEN '******' ELSE password END AS senha 
+CASE WHEN (password != '123mudar') THEN '********' ELSE password END AS senha 
 FROM users
 
-SELECT name, description, CONVERT(CHAR(11), data_inicio, 103) AS inicio, CONVERT(CHAR(11), DATEADD(DAY, 3, data_inicio), 103) as fim 
+--- 2
+SELECT name, description, 
+CONVERT(CHAR(11), data_inicio, 103) AS inicio, 
+CONVERT(CHAR(11), DATEADD(DAY, 3, data_inicio), 103) as fim 
 FROM projects 
 WHERE id = 10001
 
+---3
 SELECT name, email FROM users
 WHERE id in
 ( 
@@ -107,6 +116,7 @@ WHERE projects_id in
 WHERE name = 'Auditoria')
 )
 
+---4
 SELECT name, description, 
 CONVERT(CHAR(10), data_inicio, 103) AS inicio,
 CONVERT(CHAR(10), DATEADD(DAY, 4, data_inicio), 103 ) AS fim,
@@ -127,9 +137,3 @@ exec sp_columns users_has_projects
 select GETDATE(); 
 
 drop table users
-
-
-
-
-
-
